@@ -29,6 +29,9 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 	 * [--fields=<fields>]
 	 * : Limit the output to specific row fields. Defaults to id,meta_key,meta_value.
 	 *
+	 * [--unserialize]
+	 * : Unserialize option values in output.
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -74,6 +77,8 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 			$metadata = array();
 		}
 
+		$unserialize = true === Utils\get_flag_value( $assoc_args, 'unserialize', null );
+
 		$items = array();
 		foreach( $metadata as $key => $values ) {
 
@@ -84,7 +89,7 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 
 			foreach( $values as $item_value ) {
 
-				$item_value = maybe_unserialize( $item_value );
+				$item_value = $unserialize ? maybe_unserialize( $item_value ) : $item_value;
 
 				$items[] = (object) array(
 					"{$this->meta_type}_id" => $object_id,
